@@ -5,3 +5,6 @@ Data cleaning:
 *remove rows with blood group '#REF!'
 *remove rows with all nan values(except age column)
 *adjusting blood group types 
+Data Manipulaion
+*Filling BP null values
+*convert necessary data types
