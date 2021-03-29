@@ -73,9 +73,14 @@ def column_gen(data):
     data['REPG1']=new[1]
     
 
-def load_data():
-    data = pd.read_csv('reqdata.csv')
-    return data
+def load_data(url):
+    try:
+        data = pd.read_csv(url)
+        return data
+    except FileNotFoundError:
+        st.error('Please enter Filename or Invalid Filename') 
+        return -1 
+    
 
 
 @st.cache(persist=True)
@@ -95,10 +100,12 @@ def load_exit():
 
 st.markdown("# HealthyKid")
 st.markdown("### Data Analysis")
+
+url = st.text_input('Enter a file path:')
 st.markdown("Data Loading")
 my_bar = st.progress(0)
 load_start()
-data = load_data()
+data = load_data(url)
 load_exit()
 st.markdown("Data Cleaning")
 my_bar = st.progress(0)
@@ -154,6 +161,7 @@ if not st.sidebar.checkbox("Hide", True,key=1):
 #st.sidebar.markdown("### Replacing NULL BP values")
 #st.sidebar.button('BP manipulation')
 #st.dataframe(data)
+
 
 
 
