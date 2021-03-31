@@ -8,3 +8,6 @@ Data cleaning:
 Data Manipulaion
 *Filling BP null values
 *convert necessary data types
+deploy in streamlit
+streamlit visualization
+

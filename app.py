@@ -96,6 +96,7 @@ def load_exit():
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 #initialization
 
@@ -104,6 +105,11 @@ def load_exit():
 #initialization
 
 >>>>>>> 937e548387881b42c80c61def3347e67fd594e10
+=======
+
+#initialization
+
+>>>>>>> f8be68ee58f2d4f1116583db38209f3c2eeeb66a
 st.markdown("# HealthyKid")
 st.markdown("### Data Analysis")
 
@@ -130,7 +136,10 @@ load_exit()
 data=cache(data)
 st.dataframe(data)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> f8be68ee58f2d4f1116583db38209f3c2eeeb66a
 
 
 
@@ -189,6 +198,7 @@ if not st.sidebar.checkbox("Hide", True,key=1):
 
 
 
+<<<<<<< HEAD
 >>>>>>> 937e548387881b42c80c61def3347e67fd594e10
 
 
@@ -251,4 +261,9 @@ if not st.sidebar.checkbox("Hide", True,key=4):
 #st.sidebar.markdown("### Replacing NULL BP values")
 #st.sidebar.button('BP manipulation')
 #st.dataframe(data)
+=======
+
+
+
+>>>>>>> f8be68ee58f2d4f1116583db38209f3c2eeeb66a
 
