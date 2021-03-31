@@ -89,14 +89,10 @@ def cache(data):
        
 def load_start():
      for percent_complete in range(100):
-         time.sleep(0.01)
+         time.sleep(0.001)
          my_bar.progress(percent_complete + 1)
 def load_exit():
              my_bar.progress(0)
-
-
-
-#initialization
 
 st.markdown("# HealthyKid")
 st.markdown("### Data Analysis")
@@ -125,22 +121,8 @@ data=cache(data)
 st.dataframe(data)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 #sidebar
 st.sidebar.title("Visualizations")
-
-
 
 #Number of Students based on School IDs and Gender
 st.sidebar.markdown("###  Number of Students based on School IDs and Gender")
@@ -156,32 +138,49 @@ if not st.sidebar.checkbox("Hide", True,key=1):
         fig = px.pie(school_count, values='Number of Students', names='School ID')
         st.plotly_chart(fig)
 
+#count plot for students based on Age
+st.sidebar.markdown("###  Number of Students based on Age")
+if not st.sidebar.checkbox("Hide", True,key=2):
+    st.markdown("### Count plot for Age")
+    fig=px.histogram(data, x='Age in yrs', color=" School ID", barmode='group')
+    st.plotly_chart(fig)
+
+#count plot for blood group
+st.sidebar.markdown("###  Count plot for Blood group")
+select = st.sidebar.selectbox('Visualization based on', [' School ID','Sex','Age in yrs'], key='2')
+if not st.sidebar.checkbox("Hide", True,key=3):
+    st.markdown("### Count plot for Blood group")
+    fig=px.histogram(data, x='Blood Group', color=select, barmode='group')
+    st.plotly_chart(fig)
+
+#Count plots for Teeth related Issues
+st.sidebar.markdown("###  General Count plots for Teeth related Issues ")
+select = st.sidebar.selectbox('Visualization based on', ['Caries','Discoloration','Healthy_Gums','Malocclusion','Oral_Hygine','TeethWellFormed','Serious_Dental_Issue','Dentist_Recommendation'], key='3')
+m_data = data.fillna('NA')
+if not st.sidebar.checkbox("Hide", True,key=4):
+    st.markdown("###  General Count plots for Teeth related Issues ")
+    fig=px.histogram(m_data, x=' School ID', color=select, barmode='group')
+    st.plotly_chart(fig)
+
+#Count plots for ENT related Issues
+st.sidebar.markdown("###  General Count plots for ENT related Issues  ")
+select = st.sidebar.selectbox('Visualization based on', ['LEFT_EAR','RIGHT_EAR','ENT_Issue','Eye_Issue','ENT_Issue_Detail','Eye_Issue_Detail','Wears_Glass'], key='4')
+if not st.sidebar.checkbox("Hide", True,key=5):
+    st.markdown("###  General Count plots for ENT related Issues ")
+    fig=px.histogram(m_data, x=' School ID', color=select, barmode='group')
+    st.plotly_chart(fig)
+
+#Count plots for eye acuity
+st.sidebar.markdown("###  General Count plots for acuity ")
+select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Sex'],key='5')
+select = st.sidebar.selectbox('Visualization based on', ['Left_Eye_Power','Right_Eye_Power','Left_Eye_Pwr_WthGlass','Right_Eye_Pwr_WthGlass'], key='6')
+if not st.sidebar.checkbox("Hide", True,key=6):
+    st.markdown("###  General Count plots for acuity")
+    fig=px.histogram(m_data, x=select1, color=select, barmode='group')
+    st.plotly_chart(fig)
+
 
 #NULL BP values        
 #st.sidebar.markdown("### Replacing NULL BP values")
 #st.sidebar.button('BP manipulation')
 #st.dataframe(data)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
