@@ -95,9 +95,15 @@ def load_exit():
              my_bar.progress(0)
 
 
+<<<<<<< HEAD
 
 #initialization
 
+=======
+
+#initialization
+
+>>>>>>> 937e548387881b42c80c61def3347e67fd594e10
 st.markdown("# HealthyKid")
 st.markdown("### Data Analysis")
 
@@ -123,6 +129,67 @@ column_gen(data)
 load_exit()
 data=cache(data)
 st.dataframe(data)
+<<<<<<< HEAD
+=======
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#sidebar
+st.sidebar.title("Visualizations")
+
+
+
+#Number of Students based on School IDs and Gender
+st.sidebar.markdown("###  Number of Students based on School IDs and Gender")
+select = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='1')
+school_count = data[' School ID'].value_counts()
+school_count = pd.DataFrame({'School ID':school_count.index, 'Number of Students':school_count.values})
+if not st.sidebar.checkbox("Hide", True,key=1):
+    st.markdown("### Number of Students based on School IDs and Gender")
+    if select == 'Bar plot':
+        fig=px.histogram(data, x=' School ID', color="Sex", barmode='group')
+        st.plotly_chart(fig)
+    else:
+        fig = px.pie(school_count, values='Number of Students', names='School ID')
+        st.plotly_chart(fig)
+
+
+#NULL BP values        
+#st.sidebar.markdown("### Replacing NULL BP values")
+#st.sidebar.button('BP manipulation')
+#st.dataframe(data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> 937e548387881b42c80c61def3347e67fd594e10
 
 
 
