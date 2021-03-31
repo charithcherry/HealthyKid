@@ -95,9 +95,21 @@ def load_exit():
              my_bar.progress(0)
 
 
+<<<<<<< HEAD
+<<<<<<< HEAD
 
 #initialization
 
+=======
+
+#initialization
+
+>>>>>>> 937e548387881b42c80c61def3347e67fd594e10
+=======
+
+#initialization
+
+>>>>>>> f8be68ee58f2d4f1116583db38209f3c2eeeb66a
 st.markdown("# HealthyKid")
 st.markdown("### Data Analysis")
 
@@ -123,6 +135,11 @@ column_gen(data)
 load_exit()
 data=cache(data)
 st.dataframe(data)
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> f8be68ee58f2d4f1116583db38209f3c2eeeb66a
 
 
 
@@ -181,7 +198,72 @@ if not st.sidebar.checkbox("Hide", True,key=1):
 
 
 
+<<<<<<< HEAD
+>>>>>>> 937e548387881b42c80c61def3347e67fd594e10
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+#sidebar
+st.sidebar.title("Visualizations")
+
+
+
+#Number of Students based on School IDs and Gender
+st.sidebar.markdown("###  Number of Students based on School IDs and Gender")
+select = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='1')
+school_count = data[' School ID'].value_counts()
+school_count = pd.DataFrame({'School ID':school_count.index, 'Number of Students':school_count.values})
+if not st.sidebar.checkbox("Hide", True,key=1):
+    st.markdown("### Number of Students based on School IDs and Gender")
+    if select == 'Bar plot':
+        fig=px.histogram(data, x=' School ID', color="Sex", barmode='group')
+        st.plotly_chart(fig)
+    else:
+        fig = px.pie(school_count, values='Number of Students', names='School ID')
+        st.plotly_chart(fig)
+
+#count plot for students based on Age
+st.sidebar.markdown("###  Number of Students based on Age")
+if not st.sidebar.checkbox("Hide", True,key=2):
+    st.markdown("### Count plot for Age")
+    fig=px.histogram(data, x='Age in yrs', color=" School ID", barmode='group')
+    st.plotly_chart(fig)
+
+#count plot for blood group
+st.sidebar.markdown("###  Count plot for Blood group")
+select = st.sidebar.selectbox('Visualization based on', [' School ID','Sex','Age in yrs'], key='2')
+if not st.sidebar.checkbox("Hide", True,key=3):
+    st.markdown("### Count plot for Blood group")
+    fig=px.histogram(data, x='Blood Group', color=select, barmode='group')
+    st.plotly_chart(fig)
+
+#count plot for blood group
+st.sidebar.markdown("###  General Count plots  ")
+select = st.sidebar.selectbox('Visualization based on', ['Caries','Discoloration','Healthy_Gums','Malocclusion','Oral_Hygine','TeethWellFormed','Serious_Dental_Issue','Dentist_Recommendation'], key='3')
+m_data = data.fillna('NA')
+if not st.sidebar.checkbox("Hide", True,key=4):
+    st.markdown("###  General Count plots ")
+    fig=px.histogram(m_data, x=' School ID', color=select, barmode='group')
+    st.plotly_chart(fig)
+
+#NULL BP values        
+#st.sidebar.markdown("### Replacing NULL BP values")
+#st.sidebar.button('BP manipulation')
+#st.dataframe(data)
+=======
+
+
+
+>>>>>>> f8be68ee58f2d4f1116583db38209f3c2eeeb66a
 
