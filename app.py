@@ -97,11 +97,20 @@ def load_exit():
 st.markdown("# HealthyKid")
 st.markdown("### Data Analysis")
 
-url = st.text_input('Enter a file path:')
+def data_upload():
+    df = pd.DataFrame()
+    data_file = st.file_uploader("Upload CSV",type=['csv'])
+    if data_file is not None:
+        file_details = {"Filename":data_file.name,"FileType":data_file.type,"FileSize":data_file.size}
+        st.write(file_details)
+        df = pd.read_csv(data_file)
+        st.dataframe(df)
+    return df
+
 st.markdown("Data Loading")
 my_bar = st.progress(0)
 load_start()
-data = load_data(url)
+data = data_upload()
 load_exit()
 st.markdown("Data Cleaning")
 my_bar = st.progress(0)
@@ -147,27 +156,36 @@ if not st.sidebar.checkbox("Hide", True,key=2):
 
 #count plot for blood group
 st.sidebar.markdown("###  Count plot for Blood group")
-select = st.sidebar.selectbox('Visualization based on', [' School ID','Sex','Age in yrs'], key='2')
+select1 = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='10')
+blood_count = data['Blood Group'].value_counts()
+blood_count = pd.DataFrame({'Blood Group':blood_count.index, 'Number of Students':blood_count.values})
 if not st.sidebar.checkbox("Hide", True,key=3):
     st.markdown("### Count plot for Blood group")
-    fig=px.histogram(data, x='Blood Group', color=select, barmode='group')
-    st.plotly_chart(fig)
+    if select1 == 'Bar plot':
+        select = st.sidebar.selectbox('Visualization based on', [' School ID','Sex','Age in yrs'], key='2')
+        fig=px.histogram(data, x='Blood Group', color=select, barmode='group')
+        st.plotly_chart(fig)
+    else:
+        fig = px.pie(blood_count, values='Number of Students', names='Blood Group' )
+        st.plotly_chart(fig)
 
 #Count plots for Teeth related Issues
 st.sidebar.markdown("###  General Count plots for Teeth related Issues ")
+select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Age in yrs'],key='8')
 select = st.sidebar.selectbox('Visualization based on', ['Caries','Discoloration','Healthy_Gums','Malocclusion','Oral_Hygine','TeethWellFormed','Serious_Dental_Issue','Dentist_Recommendation'], key='3')
 m_data = data.fillna('NA')
 if not st.sidebar.checkbox("Hide", True,key=4):
     st.markdown("###  General Count plots for Teeth related Issues ")
-    fig=px.histogram(m_data, x=' School ID', color=select, barmode='group')
+    fig=px.histogram(m_data, x=select1, color=select, barmode='group')
     st.plotly_chart(fig)
 
 #Count plots for ENT related Issues
 st.sidebar.markdown("###  General Count plots for ENT related Issues  ")
+select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Age in yrs'],key='9')
 select = st.sidebar.selectbox('Visualization based on', ['LEFT_EAR','RIGHT_EAR','ENT_Issue','Eye_Issue','ENT_Issue_Detail','Eye_Issue_Detail','Wears_Glass'], key='4')
 if not st.sidebar.checkbox("Hide", True,key=5):
     st.markdown("###  General Count plots for ENT related Issues ")
-    fig=px.histogram(m_data, x=' School ID', color=select, barmode='group')
+    fig=px.histogram(m_data, x=select1, color=select, barmode='group')
     st.plotly_chart(fig)
 
 #Count plots for eye acuity
@@ -178,6 +196,14 @@ if not st.sidebar.checkbox("Hide", True,key=6):
     st.markdown("###  General Count plots for acuity")
     fig=px.histogram(m_data, x=select1, color=select, barmode='group')
     st.plotly_chart(fig)
+
+st.sidebar.markdown("###  Dataframe representing overall recommendations ")
+select = st.sidebar.selectbox('Visualization based on', ['Overall Summary','Recommendation'], key='7')
+count = data[select].value_counts()
+count = pd.DataFrame({select:count.index, 'Number of {}'.format(select):count.values})
+if not st.sidebar.checkbox("Hide", True,key=7):
+    st.markdown("###  Dataframe representing overall recommendations")
+    st.dataframe(count)
 
 
 #NULL BP values        
