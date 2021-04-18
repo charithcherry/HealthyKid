@@ -206,6 +206,13 @@ if not st.sidebar.checkbox("Hide", True,key=7):
     st.dataframe(count)
 
 
+st.sidebar.markdown("### Correlaion and Heatmaps ")
+if not st.sidebar.checkbox("Hide", True,key=8):
+    st.markdown("### Heatmap to show the correlation between age,bmi,height and weight")
+    bmi_correl = data[['Height','Weight','BMI','Age in yrs']].corr(method='pearson')
+    fig, ax = plt.subplots()
+    sns.heatmap(bmi_correl, ax=ax)
+    st.write(fig)
 #NULL BP values        
 #st.sidebar.markdown("### Replacing NULL BP values")
 #st.sidebar.button('BP manipulation')
