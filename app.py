@@ -81,7 +81,9 @@ def load_data(url):
         return data
     except FileNotFoundError:
         st.error('Please enter Filename or Invalid Filename') 
-        return -1
+        return -1 
+    
+
 
 @st.cache(persist=True,allow_output_mutation=True)
 def cache(data):
@@ -99,7 +101,7 @@ st.markdown("### Data Analysis")
 
 def data_upload(n):
     df = pd.DataFrame()
-    data_file = st.file_uploader("Upload CSV",type=['csv'],key=n)
+    data_file = st.file_uploader("Upload only CSV",type=['csv'],key=n)
     if data_file is not None:
         file_details = {"Filename":data_file.name,"FileType":data_file.type,"FileSize":data_file.size}
         st.write(file_details)
@@ -120,7 +122,8 @@ def bp_con(cols):
     x2=bp_data[(bp_data['Gender']==sex) & (bp_data['Years']==age)]['Diastolic']
     x1 = int(''.join(map(str, x1)) if ''.join(map(str, x1))!='' else 0 )
     x2 = int(''.join(map(str, x2)) if ''.join(map(str, x2))!='' else 0)
-
+    if(x1==0 or x2==0):
+        return "NA"
     if (sys<=x1 and sys>(x1-10)) and (dia<=x2 and dia>(x2-5)):
         return "Normal"
     elif(sys<(x1-10) or dia<(x2-5)):
@@ -133,12 +136,148 @@ def bp_con(cols):
 def toint(data):
     return int(data[0])
 
+def height_con(cols):
+    age=cols[0]
+    sex=cols[1]
+    height=float(cols[2])
+    
+    h1=data2[(data2['Gender']==sex) & (data2['Age']==age)]['H1']
+    h2=data2[(data2['Gender']==sex) & (data2['Age']==age)]['H2']
+    h3=data2[(data2['Gender']==sex) & (data2['Age']==age)]['H3']
+    h1 = float(''.join(map(str, h1)) if ''.join(map(str, h1))!='' else 0 )
+    h2 = float(''.join(map(str, h2)) if ''.join(map(str, h2))!='' else 0 )
+    h3 = float(''.join(map(str, h3)) if ''.join(map(str, h3))!='' else 0 )
+    if(h1==0 or h2==0 or h3==0):
+        return "NA"  
+    if (height<=h1):
+        return "Stunted"
+    elif(height>h1 and height<h2):
+        return "Borderline"
+    elif(height>h2 and height<h3):
+        return "Normal"
+    elif(height>h3):
+        return "Over-height"
+    else:
+        return "NA"
 
+
+def weight_con(cols):
+    age=cols[0]
+    sex=cols[1]
+    weight=cols[2]
+   
+    w1=data3[(data3['Gender']==sex) & (data3['Age']==age)]['W1']
+    w2=data3[(data3['Gender']==sex) & (data3['Age']==age)]['W2']
+    w3=data3[(data3['Gender']==sex) & (data3['Age']==age)]['W3']
+    w1 = float(''.join(map(str, w1)) if ''.join(map(str, w1))!='' else 0 )
+    w2 = float(''.join(map(str, w2)) if ''.join(map(str, w2))!='' else 0 )
+    w3 = float(''.join(map(str, w3)) if ''.join(map(str, w3))!='' else 0 )
+    if(w1==0 or w2==0 or w3==0):
+        return "NA"  
+    if (weight<=w1):
+        return "Under-weight"
+    elif(weight>w1 and weight<w2):
+        return "Borderline"
+    elif(weight>w2 and weight<w3):
+        return "Normal"
+    elif(weight>w3):
+        return "Over-weight"
+    else:
+        return "NA"
+
+
+def bmi_con(cols):
+    age=cols[0]
+    sex=cols[1]
+    BMI=cols[2]
+   
+    b1=data4[(data4['Gender']==sex) & (data4['Age']==age)]['Bmi1']
+    b2=data4[(data4['Gender']==sex) & (data4['Age']==age)]['Bmi2']
+    b3=data4[(data4['Gender']==sex) & (data4['Age']==age)]['Bmi3']
+    b4=data4[(data4['Gender']==sex) & (data4['Age']==age)]['Bmi4']
+    b1 = float(''.join(map(str, b1)) if ''.join(map(str, b1))!='' else 0 )
+    b2 = float(''.join(map(str, b2)) if ''.join(map(str, b2))!='' else 0 )
+    b3 = float(''.join(map(str, b3)) if ''.join(map(str, b3))!='' else 0 )
+    b4 = float(''.join(map(str, b4)) if ''.join(map(str, b4))!='' else 0 ) 
+    if(b1==0 or b2==0 or b3==0 or b4==0):
+        return "NA"  
+    if (BMI<=b1):
+        return "Under-weight"
+    elif(BMI>b1 and BMI<b2):
+        return "Borderline"
+    elif(BMI>b2 and BMI<b3):
+        return "Normal"
+    elif(BMI>b3 and BMI<b4):
+        return "Over-weight"
+    elif(BMI>b4):
+        return "Obese"
+    else:
+        return "NA"
+
+def eye_con(cols):
+    rep=cols[0]
+    lep=cols[1]
+    if(rep == 0 or lep == 0):
+        return "NA"  
+    if (rep =='6/6'and lep =='6/6'):
+        return "Normal"
+    elif(rep =='6/12'or lep =='6/12' or rep =='6/12'or lep =='6/12' or rep =='6/9'or lep =='6/9'):
+        return "Minor"
+    elif(rep =='6/18'or lep =='6/18' or rep =='6/24'or lep =='6/24' or rep =='6/36'or lep =='6/36'or lep=='6/60' or rep=='6/60'):
+        return "Major"
+    else:
+        return "NA"
+
+def teeth_con(cols):
+    caries=cols[0]
+    discoloration=cols[1]
+    healthygums=cols[2]
+    malocclusion=cols[3]
+    oralhygiene=cols[4]
+    teethwellformed=cols[5]
+    
+    if(caries==0 and discoloration==0 and healthygums==0 and malocclusion==0 and oralhygiene == 0 and teethwellformed==0):
+        return "NA"  
+    if (caries=='No' and discoloration=='No' and healthygums=='Yes' and malocclusion=='No' and (oralhygiene == 'Good' or oralhygiene=='Fair') and teethwellformed=='Yes' ):
+        return "Normal"
+    elif(caries=='Yes' and (discoloration=='No' or discoloration=='Yes') and (healthygums=='Yes' or healthygums=='No') and (malocclusion=='No' or malocclusion == 'Yes') and (oralhygiene == 'Good' or oralhygiene=='Fair' or oralhygiene == 'Poor') and (teethwellformed=='Yes' or teethwellformed=='No')):
+        return "Abnormal"
+    else:
+        return "NA"
+
+def ent_con(cols):
+    ent=cols[0]
+ 
+    if(ent==0):
+        return "NA"  
+    if (ent=='No'):
+        return "Normal"
+    elif(ent=='Yes'):
+        return "Abnormal"
+    else:
+        return "NA"
+
+def health_con(cols):
+    eye=cols[0]
+    teeth=cols[1]
+    ent=cols[2]
+    
+    if(eye==0 and teeth==0 and ent==0):
+        return "NA"  
+    if (eye=='Normal' and teeth=='Normal' and ent=='Normal'):
+        return "Normal"
+    elif((eye=='Minor' or eye=='Normal') and (teeth=='Normal' or teeth=='Abnormal') and (ent=='Normal' or ent=='Abnormal')):
+        return "Minor"
+    elif(eye=='Major' and (teeth=='Normal' or teeth=='Abnormal') and (ent=='Normal' or ent=='Abnormal')):
+        return "Major"
+    else:
+        return "NA"
 
 
 st.markdown("Data Loading")
 my_bar = st.progress(0)
 load_start()
+st.markdown("Enter the main dataset")
 data = data_upload(1)
 load_exit()
 st.markdown("Data Cleaning")
@@ -259,10 +398,12 @@ if not st.sidebar.checkbox("Hide", True,key=9):
     color="Sex")
     st.plotly_chart(fig)
 
-st.sidebar.markdown("### Enter the BP dataset ")
+st.sidebar.markdown("### Enter the different condition datasets ")    
+st.sidebar.markdown("### Upload the BP Condition dataset ")
 if not st.sidebar.checkbox("Hide", True,key=10):
+    select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID','height_condition','weight_condition', 'bmi_condition'], key='14')
     st.markdown("Upload BP Condition Dataset")
-    bp_data=data_upload(2)
+    bp_data=data_upload(5)
     data['systolic'] = data['systolic'].replace('0', np.nan)
     data['diastolic']=data['diastolic'].replace('0',np.nan)
     data[['systolic', 'diastolic']] = data[['systolic','diastolic']].fillna(value=0)
@@ -272,8 +413,108 @@ if not st.sidebar.checkbox("Hide", True,key=10):
     data['diastolic']=data['diastolic'].astype(int)
     data['bp_condition']=data[['Age in yrs','Sex','systolic','diastolic']].apply(bp_con,axis=1)
     st.dataframe(data[['UHID','Sex','Age in yrs','BP','bp_condition']])
+    st.markdown("### Histogram based on bp ranges ")
+    fig=px.histogram(data, x=select, color='bp_condition', barmode='group')
+    st.plotly_chart(fig)
 
-#NULL BP values        
-#st.sidebar.markdown("### Replacing NULL BP values")
-#st.sidebar.button('BP manipulation')
-#st.dataframe(data)
+st.sidebar.markdown("### Upload Height Condition dataset ")
+if not st.sidebar.checkbox("Hide", True,key=11):
+    select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID','bp_condition','weight_condition', 'bmi_condition'], key='15')
+    st.markdown("Upload Height Condition Dataset")
+    data2 = data_upload(2)
+    data['height_condition']=data[['Age in yrs','Sex','Height']].apply(height_con,axis=1)
+    st.dataframe(data[['UHID','Sex','Age in yrs','Height','height_condition']])
+    st.markdown("### Histogram based on Height ")
+    fig=px.histogram(data, x=select, color='height_condition', barmode='group')
+    st.plotly_chart(fig)
+
+st.sidebar.markdown("### Upload Weight Condition dataset ")
+if not st.sidebar.checkbox("Hide", True,key=12):
+    select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID','bp_condition','height_condition', 'bmi_condition'], key='16')
+    st.markdown("Upload Weight Condition Dataset")
+    data3 = data_upload(3)
+    data['weight_condition']=data[['Age in yrs','Sex','Weight']].apply(weight_con,axis=1)
+    st.dataframe(data[['UHID','Sex','Age in yrs','Weight','weight_condition']])
+    st.markdown("### Histogram based on weight ")
+    fig=px.histogram(data, x=select, color='weight_condition', barmode='group')
+    st.plotly_chart(fig)
+
+st.sidebar.markdown("### Upload BMI Condition dataset ")
+if not st.sidebar.checkbox("Hide", True,key=13):
+    select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID','bp_condition','weight_condition', 'height_condition'], key='17')
+    st.markdown("Upload BMI Condition Dataset")
+    data4 = data_upload(4)
+    data['bmi_condition']=data[['Age in yrs','Sex','BMI']].apply(bmi_con,axis=1)
+    st.dataframe(data[['UHID','Sex','Age in yrs','Weight','weight_condition']])
+    st.markdown("### Histogram based on BMI ")
+    fig=px.histogram(data, x=select, color='bmi_condition', barmode='group')
+    st.plotly_chart(fig)
+
+st.sidebar.markdown("###  Details regarding Eye Condition")
+if not st.sidebar.checkbox("Hide", True,key=18):
+    select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='19')
+    data[['Right_Eye_Power','Left_Eye_Power']] = data[['Right_Eye_Power','Left_Eye_Power']].fillna(value=0)
+    data['eye_condition']=data[['Right_Eye_Power','Left_Eye_Power']].apply(eye_con,axis=1)
+    st.markdown("### Histogram based on Eye Condition")
+    fig=px.histogram(data, x=select, color='eye_condition', barmode='group')
+    st.plotly_chart(fig)
+    st.sidebar.markdown("###  Details regarding Eye Condition for specific School")
+    if not st.sidebar.checkbox("Hide", True,key=26):
+        select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='27')
+        select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='28')
+        st.markdown("### Details regarding Eye condition with respect to specific data")
+        d1=data[data[' School ID']==select1]
+        fig=px.histogram(d1,x=select, color='eye_condition', barmode='group')
+        st.plotly_chart(fig)
+
+
+st.sidebar.markdown("###  Details regarding Teeth Condition")
+if not st.sidebar.checkbox("Hide", True,key=20):
+    select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='21')
+    data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']] = data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']].fillna(value=0)
+    data['Teeth_condition']=data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']].apply(teeth_con,axis=1)
+    st.markdown("### Histogram based on Teeth Condition")
+    fig=px.histogram(data, x=select, color='Teeth_condition', barmode='group')
+    st.plotly_chart(fig)
+    st.sidebar.markdown("###  Details regarding Teeth Condition for specific School")
+    if not st.sidebar.checkbox("Hide", True,key=29):
+        select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='30')
+        select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='31')
+        st.markdown("### Details regarding Teeth condition with respect to specific data")
+        d2=data[data[' School ID']==select1]
+        fig=px.histogram(d2,x=select, color='Teeth_condition', barmode='group')
+        st.plotly_chart(fig)
+
+st.sidebar.markdown("###  Details regarding ENT Condition")
+if not st.sidebar.checkbox("Hide", True,key=22):
+    select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='23')
+    data[['ENT_Issue']] = data[['ENT_Issue']].fillna(value=0)
+    data['ENT_condition']=data[['ENT_Issue']].apply(ent_con,axis=1)
+    st.markdown("### Histogram based on ENT Condition")
+    fig=px.histogram(data, x=select, color='ENT_condition', barmode='group')
+    st.plotly_chart(fig)
+    st.sidebar.markdown("###  Details regarding ENT Condition for specific School")
+    if not st.sidebar.checkbox("Hide", True,key=32):
+        select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='33')
+        select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='34')
+        st.markdown("### Details regarding ENT condition with respect to specific data")
+        d3=data[data[' School ID']==select1]
+        fig=px.histogram(d3,x=select, color='ENT_condition', barmode='group')
+        st.plotly_chart(fig)
+
+st.sidebar.markdown("###  Details regarding Total Health Condition")
+if not st.sidebar.checkbox("Hide", True,key=24):
+    select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID','bp_condition','height_condition', 'bmi_condition'], key='25')
+    data['Health_condition']=data[['eye_condition', 'Teeth_condition','ENT_condition']].apply(health_con,axis=1)
+    st.markdown("### Histogram based on Overall Health Condition")
+    fig=px.histogram(data, x=select, color='Health_condition', barmode='group')
+    st.plotly_chart(fig)
+    st.sidebar.markdown("###  Details regarding Health Condition for specific School")
+    if not st.sidebar.checkbox("Hide", True,key=35):
+        select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='36')
+        select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='37')
+        st.markdown("### Details regarding Health condition with respect to specific data")
+        d4=data[data[' School ID']==select1]
+        fig=px.histogram(d4,x=select, color='Health_condition', barmode='group')
+        st.plotly_chart(fig)
+
