@@ -278,7 +278,7 @@ try:
     my_bar = st.progress(0)
     load_start()
     st.markdown("Enter the main dataset")
-    data = data_upload(1)
+    data = data_upload('1')
     load_exit()
     st.markdown("Data Cleaning")
     my_bar = st.progress(0)
