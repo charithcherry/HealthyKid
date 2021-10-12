@@ -278,7 +278,7 @@ try:
     my_bar = st.progress(0)
     load_start()
     st.markdown("Enter the main dataset")
-    data = data_upload('1')
+    data = data_upload(1)
     load_exit()
     st.markdown("Data Cleaning")
     my_bar = st.progress(0)
@@ -351,10 +351,11 @@ if not st.sidebar.checkbox("Hide", True,key=4):
     school_count = data[select].value_counts()
     school_count = pd.DataFrame({select:school_count.index, 'Number of Students':school_count.values})
     m_data = data.fillna('NA')
+    m_data1=m_data[m_data[select]!='NA']
     if selectm == 'Bar plot':
         select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Age in yrs'],key='8')
         st.markdown("###  General Count plots for Teeth related Issues ")
-        fig=px.histogram(m_data, x=select1, color=select, barmode='group')
+        fig=px.histogram(m_data1, x=select1, color=select, barmode='group')
         st.plotly_chart(fig)
     else:
         fig = px.pie(school_count, values='Number of Students', names=select )
@@ -369,10 +370,11 @@ if not st.sidebar.checkbox("Hide", True,key=5):
     school_count = data[select].value_counts()
     school_count = pd.DataFrame({select:school_count.index, 'Number of Students':school_count.values})
     m_data = data.fillna('NA')
+    m_data2=m_data[m_data[select]!='NA']
     if selectm == 'Bar plot':
         select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Age in yrs'],key='9')
         st.markdown("###  General Count plots for ENT related Issues ")
-        fig=px.histogram(m_data, x=select1, color=select, barmode='group')
+        fig=px.histogram(m_data2, x=select1, color=select, barmode='group')
         st.plotly_chart(fig)
     else:
         fig = px.pie(school_count, values='Number of Students', names=select )
@@ -386,10 +388,11 @@ if not st.sidebar.checkbox("Hide", True,key=6):
     school_count = data[select].value_counts()
     school_count = pd.DataFrame({select:school_count.index, 'Number of Students':school_count.values})
     m_data = data.fillna('NA')
+    m_data3=m_data[m_data[select]!='NA']
     if selectm == 'Bar plot':
         select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Sex'],key='5')
         st.markdown("###  General Count plots for acuity")
-        fig=px.histogram(m_data, x=select1, color=select, barmode='group')
+        fig=px.histogram(m_data3, x=select1, color=select, barmode='group')
         st.plotly_chart(fig)
     else:
         fig = px.pie(school_count, values='Number of Students', names=select )
@@ -447,9 +450,10 @@ if not st.sidebar.checkbox("Hide", True,key=10):
     data['systolic'] = data['systolic'].astype(int)
     data['diastolic']=data['diastolic'].astype(int)
     data['bp_condition']=data[['Age in yrs','Sex','systolic','diastolic']].apply(bp_con,axis=1)
-    st.dataframe(data[['UHID','Sex','Age in yrs','BP','bp_condition']])
+    data_bp=data[data['bp_condition']!='NA']
+    st.dataframe(data_bp[['UHID','Sex','Age in yrs','BP','bp_condition']])
     st.markdown("### Histogram based on bp ranges ")
-    fig=px.histogram(data, x=select, color='bp_condition', barmode='group')
+    fig=px.histogram(data_bp, x=select, color='bp_condition', barmode='group')
     st.plotly_chart(fig)
 
 st.sidebar.markdown("### Upload Height Condition dataset ")
@@ -458,9 +462,10 @@ if not st.sidebar.checkbox("Hide", True,key=11):
     st.markdown("Upload Height Condition Dataset")
     data2 = data_upload(2)
     data['height_condition']=data[['Age in yrs','Sex','Height']].apply(height_con,axis=1)
-    st.dataframe(data[['UHID','Sex','Age in yrs','Height','height_condition']])
+    data_h=data[data['height_condition']!='NA']
+    st.dataframe(data_h[['UHID','Sex','Age in yrs','Height','height_condition']])
     st.markdown("### Histogram based on Height ")
-    fig=px.histogram(data, x=select, color='height_condition', barmode='group')
+    fig=px.histogram(data_h, x=select, color='height_condition', barmode='group')
     st.plotly_chart(fig)
 
 st.sidebar.markdown("### Upload Weight Condition dataset ")
@@ -469,9 +474,10 @@ if not st.sidebar.checkbox("Hide", True,key=12):
     st.markdown("Upload Weight Condition Dataset")
     data3 = data_upload(3)
     data['weight_condition']=data[['Age in yrs','Sex','Weight']].apply(weight_con,axis=1)
-    st.dataframe(data[['UHID','Sex','Age in yrs','Weight','weight_condition']])
+    data_w=data[data['weight_condition']!='NA']
+    st.dataframe(data_w[['UHID','Sex','Age in yrs','Weight','weight_condition']])
     st.markdown("### Histogram based on weight ")
-    fig=px.histogram(data, x=select, color='weight_condition', barmode='group')
+    fig=px.histogram(data_w, x=select, color='weight_condition', barmode='group')
     st.plotly_chart(fig)
 
 st.sidebar.markdown("### Upload BMI Condition dataset ")
@@ -480,9 +486,10 @@ if not st.sidebar.checkbox("Hide", True,key=13):
     st.markdown("Upload BMI Condition Dataset")
     data4 = data_upload(4)
     data['bmi_condition']=data[['Age in yrs','Sex','BMI']].apply(bmi_con,axis=1)
-    st.dataframe(data[['UHID','Sex','Age in yrs','Weight','weight_condition']])
+    data_b=data[data['bmi_condition']!='NA']
+    st.dataframe(data_b[['UHID','Sex','Age in yrs','Weight','weight_condition']])
     st.markdown("### Histogram based on BMI ")
-    fig=px.histogram(data, x=select, color='bmi_condition', barmode='group')
+    fig=px.histogram(data_b, x=select, color='bmi_condition', barmode='group')
     st.plotly_chart(fig)
 
 
