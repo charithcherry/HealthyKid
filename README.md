@@ -5,7 +5,7 @@
 
 
 ### Version 1 - Basic visualization
-Barplots, pieplots, pairplots
+Barplots, histograms, pieplots, pairplots  (univariate , bivariate and multi variate visualizations)
 
 ### Version 2 - Version1 + Manipulation Functions 
 Functions to clean and handle data with ambiguity.
