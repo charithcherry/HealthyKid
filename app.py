@@ -1,3 +1,4 @@
+from ctypes import alignment
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -11,7 +12,9 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from plotly.offline import download_plotlyjs, init_notebook_mode, iplot
 from plotly.graph_objs import *
-
+from collections import Counter
+from fpdf import FPDF
+import base64
 
 def BloodGroupTypes(data):
     data.loc[(data['Blood Group'] == 'A+')|(data['Blood Group'] == 'A'),'Blood Group']='A+ve'
@@ -228,22 +231,17 @@ def eye_con(cols):
     else:
         return "NA"
 
-def teeth_con(cols):
-    caries=cols[0]
-    discoloration=cols[1]
-    healthygums=cols[2]
-    malocclusion=cols[3]
-    oralhygiene=cols[4]
-    teethwellformed=cols[5]
-    
-    if(caries==0 and discoloration==0 and healthygums==0 and malocclusion==0 and oralhygiene == 0 and teethwellformed==0):
-        return "NA"  
-    if (caries=='No' and discoloration=='No' and healthygums=='Yes' and malocclusion=='No' and (oralhygiene == 'Good' or oralhygiene=='Fair') and teethwellformed=='Yes' ):
-        return "Normal"
-    elif(caries=='Yes' and (discoloration=='No' or discoloration=='Yes') and (healthygums=='Yes' or healthygums=='No') and (malocclusion=='No' or malocclusion == 'Yes') and (oralhygiene == 'Good' or oralhygiene=='Fair' or oralhygiene == 'Poor') and (teethwellformed=='Yes' or teethwellformed=='No')):
-        return "Abnormal"
+def teeth_con(rec):
+    rec=str(rec)
+    if 'extraction' in rec or 'restoration' in rec:
+        return 'Major'
+    elif 'scaling' in rec:
+        return 'Minor'
+    elif 'NA' in rec:
+        return 'NA'
     else:
-        return "NA"
+        return 'Normal'
+
 
 def ent_con(cols):
     ent=cols[0]
@@ -253,7 +251,7 @@ def ent_con(cols):
     if (ent=='No'):
         return "Normal"
     elif(ent=='Yes'):
-        return "Abnormal"
+        return "Minor"
     else:
         return "NA"
 
@@ -261,17 +259,25 @@ def health_con(cols):
     eye=cols[0]
     teeth=cols[1]
     ent=cols[2]
-    
-    if(eye==0 and teeth==0 and ent==0):
-        return "NA"  
-    if (eye=='Normal' and teeth=='Normal' and ent=='Normal'):
-        return "Normal"
-    elif((eye=='Minor' or eye=='Normal') and (teeth=='Normal' or teeth=='Abnormal') and (ent=='Normal' or ent=='Abnormal')):
-        return "Minor"
-    elif(eye=='Major' and (teeth=='Normal' or teeth=='Abnormal') and (ent=='Normal' or ent=='Abnormal')):
-        return "Major"
+    bp=cols[3]
+    bmi=cols[4]
+ 
+    if bp=='Subnormal' or bp=='Abnormal':
+        bp='Minor'
+    if bmi=='Borderline':
+        bmi='Minor'
+    elif bmi=='Under-weight' or bmi=='Obese' or bmi=='Over-weight':
+        bmi='Major'
+    dic=Counter([eye,teeth,ent,bp,bmi])
+   
+    if 'Major' in dic:
+        return 'Major'
+    elif 'Minor' in dic:
+        return 'Minor'
+    elif dic['Normal']>=1:
+        return 'Normal'
     else:
-        return "NA"
+        return 'NA'
 
 try:
     st.markdown("Data Loading")
@@ -351,7 +357,7 @@ if not st.sidebar.checkbox("Hide", True,key=4):
     school_count = data[select].value_counts()
     school_count = pd.DataFrame({select:school_count.index, 'Number of Students':school_count.values})
     m_data = data.fillna('NA')
-    m_data1=m_data[m_data[select]!='NA']
+    m_data1=m_data[m_data[select]!=0]
     if selectm == 'Bar plot':
         select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Age in yrs'],key='8')
         st.markdown("###  General Count plots for Teeth related Issues ")
@@ -388,7 +394,7 @@ if not st.sidebar.checkbox("Hide", True,key=6):
     school_count = data[select].value_counts()
     school_count = pd.DataFrame({select:school_count.index, 'Number of Students':school_count.values})
     m_data = data.fillna('NA')
-    m_data3=m_data[m_data[select]!='NA']
+    m_data3=m_data[m_data[select]!=0]
     if selectm == 'Bar plot':
         select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Sex'],key='5')
         st.markdown("###  General Count plots for acuity")
@@ -503,19 +509,20 @@ if not st.sidebar.checkbox("Hide", True,key=18):
     selectm = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='61')
     data[['Right_Eye_Power','Left_Eye_Power']] = data[['Right_Eye_Power','Left_Eye_Power']].fillna(value=0)
     data['eye_condition']=data[['Right_Eye_Power','Left_Eye_Power']].apply(eye_con,axis=1)
-    school_count = data['eye_condition'].value_counts()
+    data_e=data[data['eye_condition']!='NA']
+    school_count = data_e['eye_condition'].value_counts()
     school_count = pd.DataFrame({'eye_condition':school_count.index, 'Number of Students':school_count.values})
     if selectm == 'Bar plot':
         select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='19')
         st.markdown("### Histogram based on Eye Condition")
-        fig=px.histogram(data, x=select, color='eye_condition', barmode='group')
+        fig=px.histogram(data_e, x=select, color='eye_condition', barmode='group')
         st.plotly_chart(fig)
         st.sidebar.markdown("###  Details regarding Eye Condition for specific School")
         if not st.sidebar.checkbox("Hide", True,key=26):
             select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='27')
             select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='28')
             st.markdown("### Details regarding Eye condition with respect to specific data")
-            d1=data[data[' School ID']==select1]
+            d1=data_e[data_e[' School ID']==select1]
             fig=px.histogram(d1,x=select, color='eye_condition', barmode='group')
             st.plotly_chart(fig)
     else:
@@ -525,21 +532,21 @@ if not st.sidebar.checkbox("Hide", True,key=18):
 st.sidebar.markdown("###  Details regarding Teeth Condition")
 if not st.sidebar.checkbox("Hide", True,key=20):
     selectm = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='62')
-    data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']] = data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']].fillna(value=0)
-    data['Teeth_condition']=data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']].apply(teeth_con,axis=1)
-    school_count = data['Teeth_condition'].value_counts()
+    data['Teeth_condition']=data[['Dentist_Recommendation']].apply(teeth_con,axis=1)
+    data_t=data[data['Teeth_condition']!='NA']
+    school_count = data_t['Teeth_condition'].value_counts()
     school_count = pd.DataFrame({'Teeth_condition':school_count.index, 'Number of Students':school_count.values})
     if selectm == 'Bar plot':
         select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='21')
         st.markdown("### Histogram based on Teeth Condition")
-        fig=px.histogram(data, x=select, color='Teeth_condition', barmode='group')
+        fig=px.histogram(data_t, x=select, color='Teeth_condition', barmode='group')
         st.plotly_chart(fig)
         st.sidebar.markdown("###  Details regarding Teeth Condition for specific School")
         if not st.sidebar.checkbox("Hide", True,key=29):
             select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='30')
             select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='31')
             st.markdown("### Details regarding Teeth condition with respect to specific data")
-            d2=data[data[' School ID']==select1]
+            d2=data_t[data_t[' School ID']==select1]
             fig=px.histogram(d2,x=select, color='Teeth_condition', barmode='group')
             st.plotly_chart(fig)
     else:
@@ -551,19 +558,20 @@ if not st.sidebar.checkbox("Hide", True,key=22):
     selectm = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='63')
     data[['ENT_Issue']] = data[['ENT_Issue']].fillna(value=0)
     data['ENT_condition']=data[['ENT_Issue']].apply(ent_con,axis=1)
-    school_count = data['ENT_condition'].value_counts()
+    data_en=data[data['ENT_condition']!='NA']
+    school_count = data_en['ENT_condition'].value_counts()
     school_count = pd.DataFrame({'ENT_condition':school_count.index, 'Number of Students':school_count.values})
     if selectm == 'Bar plot':
         select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='23')
         st.markdown("### Histogram based on ENT Condition")
-        fig=px.histogram(data, x=select, color='ENT_condition', barmode='group')
+        fig=px.histogram(data_en, x=select, color='ENT_condition', barmode='group')
         st.plotly_chart(fig)
         st.sidebar.markdown("###  Details regarding ENT Condition for specific School")
         if not st.sidebar.checkbox("Hide", True,key=32):
             select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='33')
             select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='34')
             st.markdown("### Details regarding ENT condition with respect to specific data")
-            d3=data[data[' School ID']==select1]
+            d3=data_en[data_en[' School ID']==select1]
             fig=px.histogram(d3,x=select, color='ENT_condition', barmode='group')
             st.plotly_chart(fig)
     else:
@@ -575,24 +583,27 @@ if not st.sidebar.checkbox("Hide", True,key=24):
     data[['Right_Eye_Power','Left_Eye_Power']] = data[['Right_Eye_Power','Left_Eye_Power']].fillna(value=0)
     data['eye_condition']=data[['Right_Eye_Power','Left_Eye_Power']].apply(eye_con,axis=1)
     data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']] = data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']].fillna(value=0)
-    data['Teeth_condition']=data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']].apply(teeth_con,axis=1)
+    data['Teeth_condition']=data[['Dentist_Recommendation']].apply(teeth_con,axis=1)
     data[['ENT_Issue']] = data[['ENT_Issue']].fillna(value=0)
     data['ENT_condition']=data[['ENT_Issue']].apply(ent_con,axis=1)
     selectm = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='64')
-    data['Health_condition']=data[['eye_condition', 'Teeth_condition','ENT_condition']].apply(health_con,axis=1)
-    school_count = data['Health_condition'].value_counts()
+    data['Health_condition']=data[['eye_condition', 'Teeth_condition','ENT_condition','bp_condition', 'bmi_condition']].apply(health_con,axis=1)
+    data_he=data[data['Health_condition']!='NA']
+
+    st.download_button(label='Download excel',data=data.to_csv(),file_name='final_analysis.csv')
+    school_count = data_he['Health_condition'].value_counts()
     school_count = pd.DataFrame({'Health_condition':school_count.index, 'Number of Students':school_count.values})
     if selectm == 'Bar plot':
         select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID','bp_condition','height_condition', 'bmi_condition'], key='25')
         st.markdown("### Histogram based on Overall Health Condition")
-        fig=px.histogram(data, x=select, color='Health_condition', barmode='group')
+        fig=px.histogram(data_he, x=select, color='Health_condition', barmode='group')
         st.plotly_chart(fig)
         st.sidebar.markdown("###  Details regarding Health Condition for specific School")
         if not st.sidebar.checkbox("Hide", True,key=35):
             select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='36')
             select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='37')
             st.markdown("### Details regarding Health condition with respect to specific data")
-            d4=data[data[' School ID']==select1]
+            d4=data_he[data_he[' School ID']==select1]
             fig=px.histogram(d4,x=select, color='Health_condition', barmode='group')
             st.plotly_chart(fig)
     else:
@@ -647,11 +658,60 @@ if not st.sidebar.checkbox("Hide", True,key=38):
 
 
 
+  #individual student data
+def check(col):
+    bp=col[3]
+    bmi=col[4]
+    if bp=='Subnormal' or bp=='Abnormal':
+        col[3]='Minor'
+    if bmi=='Borderline':
+        col[4]='Minor'
+    elif bmi=='Under-weight' or bmi=='Obese' or bmi=='Over-weight':
+        col[4]='Major'
+    return col
 
+def create_download_link(val, filename):
+        b64 = base64.b64encode(val)  # val looks like b'...'
+        return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{filename}.pdf">Download file</a>'
 
+st.sidebar.markdown("-----------------------------------------------")
+st.sidebar.markdown("###  Individual Student's Data")
 
+if not st.sidebar.checkbox("Hide", True,key=39):
+    number = st.text_input("Enter Student's UHID Number") 
+    i_data=data[data['UHID']==number]
+    st.dataframe(i_data)
+   
+    a=[]
+    a.append(i_data['eye_condition'].values[0])
+    a.append(i_data['Teeth_condition'].values[0])
+    a.append(i_data['ENT_condition'].values[0])
+    a.append(i_data['bp_condition'].values[0])
+    a.append(i_data['bmi_condition'].values[0])
+    a=Counter(check(a))
+    sentence="Student with id {} has ".format(number)
+    for x,y in a.items():
+        if x!='Normal':
+            sentence=sentence+"{} {} issues ".format(y,x)
+    st.write(sentence)
+    export_as_pdf = st.button("Export Report")
+    
+    if export_as_pdf:
+        i=24
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font('Arial', 'B', 20)
+        pdf.cell(180,8,"Individual Student Report",align='C')
+        pdf.ln()
+        pdf.ln()
+        pdf.set_font('Arial', 'B', 12)
+        for x in i_data.columns:
+            pdf.cell(20, 7,"{} : {}".format(x,i_data[x].values[0]))
+            pdf.ln()
 
+        html = create_download_link(pdf.output(dest="S").encode("latin-1"), "test")
 
+        st.markdown(html, unsafe_allow_html=True)
 
 
 
