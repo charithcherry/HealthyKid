@@ -1,6 +1,6 @@
 # HealthyKid
 
-Tools/IDE : Numpy, Pandas, Plotly, Matplotlib, Seaborn, Streamlit
+## Tools/IDE : Numpy, Pandas, Plotly, Matplotlib, Seaborn, Streamlit
 
 
 
