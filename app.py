@@ -680,7 +680,9 @@ st.sidebar.markdown("###  Individual Student's Data")
 if not st.sidebar.checkbox("Hide", True,key=39):
     number = st.text_input("Enter Student's UHID Number") 
     i_data=data[data['UHID']==number]
-    st.dataframe(i_data)
+    #st.dataframe(i_data)
+    for x in i_data.columns:
+        st.write("{} : {}".format(x,i_data[x].values[0]))
    
     a=[]
     a.append(i_data['eye_condition'].values[0])
@@ -706,9 +708,11 @@ if not st.sidebar.checkbox("Hide", True,key=39):
         pdf.ln()
         pdf.set_font('Arial', 'B', 12)
         for x in i_data.columns:
-            pdf.cell(20, 7,"{} : {}".format(x,i_data[x].values[0]))
+            pdf.cell(20, 9,"{} : {}".format(x,i_data[x].values[0]))
             pdf.ln()
-
+        pdf.ln()
+        pdf.set_font('Arial', 'B', 18)
+        pdf.cell(40,10,sentence)
         html = create_download_link(pdf.output(dest="S").encode("latin-1"), "test")
 
         st.markdown(html, unsafe_allow_html=True)
