@@ -127,11 +127,11 @@ def bp_con(cols):
     x2 = int(''.join(map(str, x2)) if ''.join(map(str, x2))!='' else 0)
     if(x1==0 or x2==0):
         return "NA"
-    if (sys<=x1 and sys>(x1-10)) and (dia<=x2 and dia>(x2-5)):
+    if ((sys>=(x1-20) and sys<=(x1+20)) and (dia>=(x2-10) and dia<=(x2+10))):
         return "Normal"
-    elif(sys<(x1-10) or dia<(x2-5)):
+    elif(sys<(x1-20) or dia<(x2-10)):
         return "Subnormal"
-    elif(sys>x1 or dia>x2):
+    elif(sys>(x1+20) or dia>(x2+10)):
         return "Abnormal"
     else:
         return "NA"
@@ -206,13 +206,13 @@ def bmi_con(cols):
         return "NA"  
     if (BMI<=b1):
         return "Under-weight"
-    elif(BMI>b1 and BMI<b2):
+    elif(BMI>b1 and BMI<=b2):
         return "Borderline"
     elif(BMI>b2 and BMI<b3):
         return "Normal"
-    elif(BMI>b3 and BMI<b4):
+    elif(BMI>=b3 and BMI<b4):
         return "Over-weight"
-    elif(BMI>b4):
+    elif(BMI>=b4):
         return "Obese"
     else:
         return "NA"
@@ -222,12 +222,12 @@ def eye_con(cols):
     lep=cols[1]
     if(rep == 0 or lep == 0):
         return "NA"  
-    if (rep =='6/6'and lep =='6/6'):
-        return "Normal"
-    elif(rep =='6/12'or lep =='6/12' or rep =='6/12'or lep =='6/12' or rep =='6/9'or lep =='6/9'):
-        return "Minor"
-    elif(rep =='6/18'or lep =='6/18' or rep =='6/24'or lep =='6/24' or rep =='6/36'or lep =='6/36'or lep=='6/60' or rep=='6/60'):
+    if(rep =='6/18'or lep =='6/18' or rep =='6/24'or lep =='6/24' or rep =='6/36'or lep =='6/36'or lep=='6/60' or rep=='6/60'):
         return "Major"
+    elif(rep =='6/12'or lep =='6/12'):
+        return "Minor"
+    elif(rep =='6/6' or lep =='6/6' or rep =='6/9' or lep =='6/9'):
+        return "Normal"
     else:
         return "NA"
 
