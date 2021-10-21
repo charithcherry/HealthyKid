@@ -21,6 +21,5 @@ Defined algorithmns for basic column manipulation. Used FPDF for pdf generation
 
 
 ### Version 5 - Version4 + Condition changes + Specified value deletion 'NA' for graph + final data [excel] donwload + individual student data report + Conditional Changes
-Defined algorithmns for basic column manipulation. Used FPDF for pdf generation 
 
 ### Deployment link : [link](https://healthy-kid.herokuapp.com/)
