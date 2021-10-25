@@ -3,7 +3,6 @@
 ## Tools/IDE : Numpy, Pandas, Plotly, Matplotlib, Seaborn, Streamlit
 
 
-
 ### Version 1 - Basic visualization
 Barplots, histograms, pieplots, pairplots  (univariate , bivariate and multi variate visualizations)
 
