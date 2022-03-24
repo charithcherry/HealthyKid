@@ -15,8 +15,8 @@ Functions to handle new datasets. Data manipulation
 ### Version 4 - Version3 + Condition defining Functions + Specific plots 
 Defined Functions to provide specific data visualizations
 
-### Version 5 - Version4 + Condition changes + Specified value deletion 'NA' for graph + final data [excel] donwload + individual student data report
-Defined algorithmns for basic column manipulation. Used FPDF for pdf generation 
+### Version 5 - Version4 + Condition changes + Specified value deletion 'NA' for graph + final data [excel] download + individual student data report
+Defined algorithmn for basic column manipulation. Used FPDF for pdf generation 
 
 ### Version 5 - Version4 + Condition changes + Specified value deletion 'NA' for graph + final data [excel] donwload + individual student data report + Conditional Changes
 ### Deployment link : [link](https://healthy-kid.herokuapp.com/)
